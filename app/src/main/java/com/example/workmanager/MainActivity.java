@@ -2,6 +2,7 @@ package com.example.workmanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.work.Constraints;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -35,7 +36,21 @@ public class MainActivity extends AppCompatActivity {
          * and when it should be run. In the simplest case, you can use a OneTimeWorkRequest,
          * as shown in the following example.
          */
-        WorkRequest countWorkRequest = new OneTimeWorkRequest.Builder(DemoWorker.class).build();
+
+        /**
+         *   Working with Constraints
+         *   Running the worker under certain conditions: Device is connected to WiFi, or Battery is above 50% ....
+         */
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresCharging(true)
+                .build();
+
+
+        WorkRequest countWorkRequest = new OneTimeWorkRequest
+                .Builder(DemoWorker.class)
+                .setConstraints(constraints)
+                .build();
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
