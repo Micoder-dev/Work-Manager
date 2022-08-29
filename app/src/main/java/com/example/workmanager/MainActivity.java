@@ -3,6 +3,7 @@ package com.example.workmanager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.work.Constraints;
+import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -15,6 +16,15 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Sending and Receiving Data using Work Manager
+     *
+     *
+     *
+     *
+     * */
+
+    public static final String KEY_COUNTER_VALUE = "key_count";
     Button btn;
 
     @Override
@@ -46,10 +56,15 @@ public class MainActivity extends AppCompatActivity {
                 .setRequiresCharging(true)
                 .build();
 
+        /**
+         * Data Creation
+         * */
+        Data data = new Data.Builder().putInt(KEY_COUNTER_VALUE, 500).build();
 
         WorkRequest countWorkRequest = new OneTimeWorkRequest
                 .Builder(DemoWorker.class)
-                .setConstraints(constraints)
+            //    .setConstraints(constraints)
+                .setInputData(data)
                 .build();
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo != null) {
                             Toast.makeText(MainActivity.this, "Status: "+workInfo.getState().name(), Toast.LENGTH_SHORT).show();
+
+                            if (workInfo.getState().isFinished()) {
+                                Data data1 = workInfo.getOutputData();
+                                String msg = data1.getString(DemoWorker.KEY_WORKER);
+                                Toast.makeText(MainActivity.this, ""+msg, Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     }
                 });
